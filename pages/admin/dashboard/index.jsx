@@ -129,7 +129,7 @@ const Dashboard = () => {
 								)}
 								controls={(register) => (
 									<Flex flex={1} justify="end" align="center" gap={3}>
-										<Button size="lg" colorScheme="brand" disabled={watch('date') ? convert(watch('date')) !== date : false} onClick={() => window.open('http://localhost:3000/admin/attendance/today', 'attendance', 'width=1366, height=768')}>
+										<Button size="lg" colorScheme="brand" disabled={watch('date') ? convert(watch('date')) !== date : false} onClick={() => window.open('https://samgyup-salamat.vercel.app/admin/attendance/today', 'attendance', 'width=1366, height=768')}>
 											Add New
 										</Button>
 									</Flex>
