@@ -84,7 +84,7 @@ const Attendance = () => {
 							<Flex flex={1} justify="end" align="center" gap={3}>
 								<Input type="date" size="lg" w="auto" {...register('date')} />
 
-								<Button size="lg" colorScheme="brand" onClick={() => window.open('http://localhost:3000/admin/attendance/today', 'attendance', 'width=1366, height=768')}>
+								<Button size="lg" colorScheme="brand" onClick={() => window.open(`${process.env.NEXT_PUBLIC_URL}/admin/attendance/today`, 'attendance', 'width=1366, height=768')}>
 									Add New
 								</Button>
 							</Flex>

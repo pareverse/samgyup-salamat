@@ -16,7 +16,7 @@ const Dashboard = () => {
 	const { data: attendance, isFetched: isAttendanceFetched } = useQuery(['attendance'], () => api.all('/attendance'))
 
 	let date = new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }).split(',')[0].trim()
-	let today = `${date.split('/')[2]}-${Number(date.split('/')[0]) < 9 ? '0' + date.split('/')[0] : date.split('/')[0]}-${Number(date.split('/')[0]) < 9 ? '0' + date.split('/')[1] : date.split('/')[1]}`
+	let today = `${date.split('/')[2]}-${Number(date.split('/')[0]) < 9 ? '0' + date.split('/')[0] : date.split('/')[0]}-${Number(date.split('/')[1]) < 9 ? '0' + date.split('/')[1] : date.split('/')[1]}`
 
 	const { register, watch, setValue } = useForm()
 
@@ -129,7 +129,7 @@ const Dashboard = () => {
 								)}
 								controls={(register) => (
 									<Flex flex={1} justify="end" align="center" gap={3}>
-										<Button size="lg" colorScheme="brand" disabled={watch('date') ? convert(watch('date')) !== date : false} onClick={() => window.open('http://localhost:3000/admin/attendance/today', 'attendance', 'width=1366, height=768')}>
+										<Button size="lg" colorScheme="brand" disabled={watch('date') ? convert(watch('date')) !== date : false} onClick={() => window.open(`${process.env.NEXT_PUBLIC_URL}/admin/attendance/today`, 'attendance', 'width=1366, height=768')}>
 											Add New
 										</Button>
 									</Flex>
