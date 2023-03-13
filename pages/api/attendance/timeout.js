@@ -13,10 +13,10 @@ export default async (req, res) => {
 		const time = () => {
 			let today = new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }).split(',')[1].trim()
 
-			if (Number(today.split(' ')[0].split(':')[0]) < 10) {
-				return `0${today.split(' ')[0].split(':')[0]}:${today.split(' ')[0].split(':')[1]} ${today.split(' ')[1]}`
+			if (Number(today.split(' ')[0].split(':')[0]) < 9) {
+				return `0${today.split(' ')[0].split(':')[0]}:${today.split(' ')[0].split(':')[1]} ${today.includes('AM') ? 'AM' : 'PM'}`
 			} else {
-				return `${today.split(' ')[0].split(':')[0]}:${today.split(' ')[0].split(':')[1]} ${today.split(' ')[1]}`
+				return `${today.split(' ')[0].split(':')[0]}:${today.split(' ')[0].split(':')[1]} ${today.includes('AM') ? 'AM' : 'PM'}`
 			}
 		}
 
