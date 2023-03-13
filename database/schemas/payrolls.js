@@ -14,7 +14,37 @@ const PayrollSchema = mongoose.Schema(
 			type: Object,
 			default: {}
 		},
+		amount: {
+			pay: {
+				type: Number,
+				default: 0
+			},
+			overtime: {
+				type: Number,
+				default: 0
+			},
+			grosspay: {
+				type: Number,
+				default: 0
+			},
+			leaves: {
+				type: Number,
+				default: 0
+			},
+			deductions: {
+				type: Number,
+				default: 0
+			},
+			netpay: {
+				type: Number,
+				default: 0
+			}
+		},
 		attendances: {
+			type: Array,
+			default: []
+		},
+		leaves: {
 			type: Array,
 			default: []
 		},

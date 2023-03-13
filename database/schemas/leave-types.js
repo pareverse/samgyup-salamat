@@ -6,6 +6,10 @@ const LeaveTypeSchema = mongoose.Schema(
 			type: String,
 			default: ''
 		},
+		payed: {
+			type: Boolean,
+			default: false
+		},
 		created: {
 			type: String,
 			default: ''

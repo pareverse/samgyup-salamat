@@ -24,6 +24,10 @@ const LeaveSchema = mongoose.Schema(
 			type: Number,
 			default: 0
 		},
+		payed: {
+			type: Boolean,
+			default: false
+		},
 		file: {
 			url: {
 				type: String,

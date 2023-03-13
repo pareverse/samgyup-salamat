@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import axios from 'axios'
 import api from 'instance'
 import { Avatar, Badge, Button, chakra, Container, Divider, Flex, FormControl, FormErrorMessage, FormLabel, Icon, IconButton, Input, Select, Td, Text, Tr, useDisclosure, useToast } from '@chakra-ui/react'
-import { FiDownloadCloud, FiFolder, FiMoreHorizontal, FiUploadCloud, FiX } from 'react-icons/fi'
+import { FiDownloadCloud, FiFile, FiMoreHorizontal, FiUploadCloud, FiX } from 'react-icons/fi'
 import Card from 'components/_card'
 import Modal from 'components/_modal'
 import Table from 'components/_table'
@@ -140,7 +140,7 @@ const AddLeaveModal = ({ session }) => {
 					{files ? (
 						<Flex align="center" gap={3} position="relative" border="1px solid" borderColor="border" borderRadius={12} p={6}>
 							<Flex flex={1} align="center" gap={3}>
-								<Icon as={FiFolder} boxSize={8} color="accent-1" />
+								<Icon as={FiFile} boxSize={8} color="accent-1" />
 
 								<Flex direction="column" w="calc(100% - 88px)">
 									<Text fontSize="sm" fontWeight="medium" color="accent-1" noOfLines={1}>
@@ -241,7 +241,7 @@ const ViewModal = ({ users, leave }) => {
 
 					<Flex align="center" gap={3} opacity={leave.status === 'cancelled' ? 0.5 : 1}>
 						<Flex flex={1} align="center" gap={3}>
-							<Icon as={FiFolder} boxSize={8} color="accent-1" />
+							<Icon as={FiFile} boxSize={8} color="accent-1" />
 
 							<Flex direction="column" w="calc(100% - 88px)">
 								<Text fontSize="sm" fontWeight="medium" textDecoration={leave.status === 'cancelled' && 'line-through'} color="accent-1" noOfLines={1}>
@@ -303,7 +303,7 @@ const ViewModal = ({ users, leave }) => {
 
 						<Flex align="center" gap={3}>
 							<Flex flex={1} align="center" gap={3}>
-								<Icon as={FiFolder} boxSize={8} color="brand.default" />
+								<Icon as={FiFile} boxSize={8} color="brand.default" />
 
 								<Flex direction="column" w="calc(100% - 88px)">
 									<Text fontSize="sm" fontWeight="medium" color="accent-1" noOfLines={1}>
