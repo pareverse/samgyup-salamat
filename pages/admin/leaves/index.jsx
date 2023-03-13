@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import axios from 'axios'
 import api from 'instance'
-import { Avatar, Badge, Button, chakra, Container, Divider, Flex, FormControl, FormErrorMessage, FormLabel, Icon, IconButton, Input, Select, Td, Text, Tr, useDisclosure, useToast } from '@chakra-ui/react'
+import { Avatar, Badge, Button, chakra, Checkbox, Container, Divider, Flex, FormControl, FormErrorMessage, FormLabel, Icon, IconButton, Input, Select, Td, Text, Tr, useDisclosure, useToast } from '@chakra-ui/react'
 import { FiDownloadCloud, FiFile, FiMoreHorizontal, FiPlus, FiTrash2, FiUploadCloud, FiX } from 'react-icons/fi'
 import Card from 'components/_card'
 import Modal from 'components/_modal'
@@ -59,7 +59,8 @@ const AddLeaveTypeModal = () => {
 		reset()
 
 		addLeaveType.mutate({
-			name: data.name.toLowerCase()
+			name: data.name.toLowerCase(),
+			payed: data.status === 'Paid Leave' ? true : false
 		})
 	}
 
@@ -87,6 +88,11 @@ const AddLeaveTypeModal = () => {
 							<FormErrorMessage>This field is required.</FormErrorMessage>
 						</FormControl>
 
+						<Select size="lg" w="256px" {...register('status')}>
+							<option value="Paid Leave">Paid Leave</option>
+							<option value="Unpaid Leave">Unpaid Leave</option>
+						</Select>
+
 						<IconButton type="submit" variant="tinted" size="lg" colorScheme="brand" icon={<FiPlus size={16} />} />
 					</Flex>
 				</form>
@@ -96,10 +102,16 @@ const AddLeaveTypeModal = () => {
 				<Table
 					data={types}
 					fetched={isTypesFetched}
-					th={[]}
+					th={['Type', 'Status', '']}
 					td={(type) => (
 						<Tr key={type._id}>
 							<Td textTransform="capitalize">{type.name}</Td>
+
+							<Td>
+								<Badge variant="tinted" colorScheme={type.payed ? 'brand' : 'red'}>
+									{type.payed ? 'Paid' : 'Unpaid'}
+								</Badge>
+							</Td>
 
 							<Td textAlign="right">
 								<IconButton variant="tinted" size="xs" colorScheme="red" icon={<FiTrash2 size={12} />} onClick={() => onDelete(type._id)} />

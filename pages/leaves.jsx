@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
@@ -44,6 +44,7 @@ const AddLeaveModal = ({ session }) => {
 	const {
 		register,
 		watch,
+		setValue,
 		formState: { errors },
 		clearErrors,
 		reset,
@@ -65,6 +66,18 @@ const AddLeaveModal = ({ session }) => {
 			return
 		}
 
+		if (calcDate(watch('from'), watch('to')).total_days > 15) {
+			setIsLoading(false)
+
+			toast({
+				position: 'top',
+				duration: 1000,
+				render: () => <Toast title="Error" description="13 days maximum per year." status="error" />
+			})
+
+			return
+		}
+
 		for (const item of [files]) {
 			const formData = new FormData()
 
@@ -81,6 +94,7 @@ const AddLeaveModal = ({ session }) => {
 				from: data.from,
 				to: data.to,
 				days: Number(data.days),
+				payed: data.status === 'Paid Leave' ? true : false,
 				file: {
 					url: res.data.secure_url,
 					name: files.name,
@@ -89,6 +103,14 @@ const AddLeaveModal = ({ session }) => {
 			})
 		}
 	}
+
+	useEffect(() => {
+		if (watch('type')) {
+			{
+				leaveTypes.filter((type) => type.name === watch('type')).map((type) => setValue('status', type.payed ? 'Paid Leave' : 'Unpaid Leave'))
+			}
+		}
+	}, [watch('type')])
 
 	return (
 		<Modal
@@ -117,6 +139,14 @@ const AddLeaveModal = ({ session }) => {
 
 						<FormErrorMessage>This field is required.</FormErrorMessage>
 					</FormControl>
+
+					{watch('type') && (
+						<FormControl>
+							<FormLabel>Status</FormLabel>
+
+							<Input type="text" size="lg" readOnly {...register('status')} />
+						</FormControl>
+					)}
 
 					<FormControl isInvalid={errors.from}>
 						<FormLabel>From</FormLabel>
@@ -382,6 +412,7 @@ const ViewModal = ({ users, leave }) => {
 
 const Leaves = () => {
 	const { data: session } = useSession()
+	const { data: user, isFetched: isUserFetched } = useQuery(['user'], () => api.get('/users', session.user.id))
 	const { data: users, isFetched: isUsersFetched } = useQuery(['users'], () => api.all('/users'))
 	const { data: leaves, isFetched: isLeavesFetched } = useQuery(['employee_leaves'], () => api.get('leaves/employee', session.user.id))
 
@@ -401,7 +432,13 @@ const Leaves = () => {
 								</Button>
 							</chakra.a>
 
-							<AddLeaveModal session={session} />
+							{!isUserFetched && user?.limit === 0 ? (
+								<Button size="lg" colorScheme="brand" disabled>
+									Add New
+								</Button>
+							) : (
+								<AddLeaveModal session={session} />
+							)}
 						</Flex>
 					</Flex>
 
@@ -450,8 +487,12 @@ const Leaves = () => {
 								</Td>
 							</Tr>
 						)}
-						select={(register) => (
+						controls={(register) => (
 							<Flex flex={1} justify="end" align="center" gap={3}>
+								<Text fontWeight="medium" color="accent-1">
+									Available this year: {isUserFetched ? user.limit : 0}
+								</Text>
+
 								<Select placeholder="Status" size="lg" w="auto" {...register('status')}>
 									<chakra.option value="waiting">Waiting</chakra.option>
 									<chakra.option value="approved">Approved</chakra.option>

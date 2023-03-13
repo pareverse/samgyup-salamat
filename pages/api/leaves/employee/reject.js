@@ -21,6 +21,13 @@ export default async (req, res) => {
 			}
 		)
 
+		await Users.findByIdAndUpdate(
+			{ _id: data.user.id },
+			{
+				limit: user.limit + data.days
+			}
+		)
+
 		// const msg = {
 		// 	to: user.email,
 		// 	from: process.env.EMAIL_FROM,

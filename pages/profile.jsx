@@ -23,10 +23,6 @@ const Account = () => {
 			<Grid gridTemplateColumns="1fr 384px" alignItems="start" gap={6}>
 				<GridItem display="grid" gap={6}>
 					<Attendance user={user} />
-
-					<Card>
-						<Spinner color="brand.default" />
-					</Card>
 				</GridItem>
 
 				<GridItem display="grid" gap={6}>

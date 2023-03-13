@@ -1,4 +1,5 @@
 import connect from 'database/connect'
+import Users from 'database/schemas/users'
 import Leaves from 'database/schemas/leaves'
 
 export default async (req, res) => {
@@ -20,11 +21,22 @@ export default async (req, res) => {
 			try {
 				const { data } = req.body
 
+				console.log(req.body)
+
 				await Leaves.create({
 					...data,
 					created: new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }),
 					updated: new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' })
 				})
+
+				const user = await Users.findById({ _id: data.user.id })
+
+				await Users.findByIdAndUpdate(
+					{ _id: data.user.id },
+					{
+						limit: user.limit - data.days
+					}
+				)
 
 				res.status(200).send('request success.')
 			} catch (error) {

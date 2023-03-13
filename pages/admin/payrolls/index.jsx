@@ -10,12 +10,16 @@ import Modal from 'components/_modal'
 import { month } from 'functions/month'
 import Toast from 'components/_toast'
 
-const ViewModal = ({ users, attendance: attAll, payroll }) => {
+const ViewModal = ({ users, leaves: allLeaves, attendance: attAll, payroll }) => {
 	const queryClient = useQueryClient()
 
 	const disclosure = useDisclosure()
 	const [isLoading, setIsLoading] = useState(false)
 	const toast = useToast()
+
+	const leaves = allLeaves.filter((al) => al.user.id === payroll.user && al.payed && al.status === 'approved')
+
+	console.log(leaves)
 
 	const attendance = attAll.filter((att) => att.user === payroll.user)
 	const { data: deductions, isFetched: isDeductionsFetched } = useQuery(['deductions'], () => api.all('/deductions'))
@@ -49,6 +53,11 @@ const ViewModal = ({ users, attendance: attAll, payroll }) => {
 		return totalDeductions
 	}
 
+	const sumLeaves = (array) => {
+		const totalDeductions = array.reduce((acc, curr) => acc + curr.days, 0)
+		return totalDeductions * 470
+	}
+
 	const { hours, minutes } = sumDuration(attendance)
 	const { overtime, pay } = sumAmounts(attendance)
 
@@ -74,12 +83,12 @@ const ViewModal = ({ users, attendance: attAll, payroll }) => {
 				pay,
 				overtime,
 				grosspay: pay + overtime,
-				leaves: 0,
+				leaves: sumLeaves(leaves),
 				deductions: sumDeductions(deductions),
 				netpay: pay + overtime + 0 - sumDeductions(deductions)
 			},
 			attendances: attendance,
-			leaves: [],
+			leaves: leaves,
 			deductions: deductions,
 			status: true
 		})
@@ -212,7 +221,7 @@ const ViewModal = ({ users, attendance: attAll, payroll }) => {
 						</Text>
 
 						<Text fontSize="sm" fontWeight="medium" color="accent-1">
-							+ 0.00
+							+ {currency(sumLeaves(leaves))}
 						</Text>
 					</Flex>
 
@@ -300,6 +309,36 @@ const ViewModal = ({ users, attendance: attAll, payroll }) => {
 					Leaves
 				</Text>
 
+				<Table
+					data={leaves}
+					fetched={true}
+					th={['Type', 'Status', 'Days']}
+					td={(leave) => (
+						<Tr key={leave._id}>
+							<Td>
+								<Text textTransform="uppercase">{leave.type}</Text>
+							</Td>
+
+							<Td>
+								<Badge variant="tinted" colorScheme={leave.payed ? 'brand' : 'red'}>
+									{leave.payed ? 'Paid Leave' : 'Unpaid Leave'}
+								</Badge>
+							</Td>
+
+							<Td>
+								<Text>
+									{leave.days} Day{leave.days > 1 && 's'}
+								</Text>
+							</Td>
+						</Tr>
+					)}
+					settings={{
+						search: 'off',
+						controls: 'off',
+						show: [100]
+					}}
+				/>
+
 				<Divider />
 
 				<Text fontSize={20} fontWeight="semibold" color="accent-1">
@@ -352,16 +391,7 @@ const Payrolls = () => {
 	const { data: users, isFetched: isUsersFetched } = useQuery(['users'], () => api.all('/users'))
 	const { data: payrolls, isFetched: isPayrollsFetched } = useQuery(['payrolls'], () => api.all('/payrolls'))
 	const { data: attendance, isFetched: isAttendanceFetched } = useQuery(['attendance'], () => api.all('/attendance'))
-
-	const netpay = (att) => {
-		let sum = 0
-
-		att.filter((att) => !att.status).map((att) => {
-			sum += att.amount.netpay
-		})
-
-		return sum
-	}
+	const { data: leaves, isFetched: isLeavesFetched } = useQuery(['leaves'], () => api.all('/leaves'))
 
 	return (
 		<Container>
@@ -375,7 +405,7 @@ const Payrolls = () => {
 				<Card>
 					<Table
 						data={payrolls}
-						fetched={isUsersFetched && isAttendanceFetched && isPayrollsFetched}
+						fetched={isUsersFetched && isAttendanceFetched && isPayrollsFetched && isLeavesFetched}
 						th={['Id', 'Employee', 'Attendance', 'Netpay', 'Status', '']}
 						td={(payroll) => (
 							<Tr key={payroll._id}>
@@ -399,9 +429,7 @@ const Payrolls = () => {
 
 								<Td>{payroll.status ? <Text>{payroll.attendances.length}</Text> : <Text>{isAttendanceFetched && attendance.filter((att) => att.user === payroll.user && !att.payed).length}</Text>}</Td>
 
-								<Td>
-									<Text>{currency(netpay(attendance))}</Text>
-								</Td>
+								<Td>{payroll.status ? <Text>{currency(payroll.amount.netpay)}</Text> : <Text>View in more</Text>}</Td>
 
 								<Td>
 									<Badge variant="tinted" colorScheme={payroll.status ? 'brand' : 'red'}>
@@ -411,7 +439,7 @@ const Payrolls = () => {
 
 								<Td>
 									<Flex justify="end">
-										<ViewModal users={users} attendance={attendance} payroll={payroll} />
+										<ViewModal users={users} leaves={leaves} attendance={attendance} payroll={payroll} />
 									</Flex>
 								</Td>
 							</Tr>

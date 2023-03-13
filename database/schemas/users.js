@@ -26,6 +26,10 @@ const UserSchema = mongoose.Schema(
 			type: String,
 			default: ''
 		},
+		limit: {
+			type: Number,
+			default: 15
+		},
 		position: {
 			title: {
 				type: String,
