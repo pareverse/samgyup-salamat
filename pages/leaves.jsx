@@ -426,7 +426,7 @@ const Leaves = () => {
 						</Text>
 
 						<Flex align="center" gap={3}>
-							<chakra.a href="https://res.cloudinary.com/ctx-hrms/raw/upload/v1669943957/ctx-hrms/Sample-Leave-Form_x6cmof.doc">
+							<chakra.a href="https://res.cloudinary.com/commence/image/upload/v1678759160/uploads/leaveform_Samgyupsalamat-1_bfxnzq.png">
 								<Button variant="tinted" size="lg" colorScheme="brand">
 									Download Form
 								</Button>

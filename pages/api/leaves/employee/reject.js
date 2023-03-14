@@ -22,9 +22,9 @@ export default async (req, res) => {
 		)
 
 		await Users.findByIdAndUpdate(
-			{ _id: data.user.id },
+			{ _id: user._id },
 			{
-				limit: user.limit + data.days
+				limit: user.limit + leave.days
 			}
 		)
 
